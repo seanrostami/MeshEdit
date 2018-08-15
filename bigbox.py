@@ -373,16 +373,18 @@ class BigBox:
 			self.coarsen()
 		elif 'c' in memento["op"]:
 			self.refine()
-		else:
+		else: # 's', 'x', 'y', 'z'
+			assert self.Depth == memento["D"], "BigBox.undo : depth changed, but undoing operation that did not change depth?"
 			self.Origin["x"] = memento["Ox"]
 			self.Origin["y"] = memento["Oy"]
 			self.Origin["z"] = memento["Oz"]
-			self.Lengths["x"] = memento["Lx"]
-			self.Lengths["y"] = memento["Ly"]
-			self.Lengths["z"] = memento["Lz"]
-			self.Steps["x"] = self.Lengths["x"]/(2**(memento["D"]))
-			self.Steps["y"] = self.Lengths["y"]/(2**(memento["D"]))
-			self.Steps["z"] = self.Lengths["z"]/(2**(memento["D"]))
+			if 's' in memento["op"]: # only scaling, not shifting, changes self.Lengths
+				self.Lengths["x"] = memento["Lx"]
+				self.Lengths["y"] = memento["Ly"]
+				self.Lengths["z"] = memento["Lz"]
+				self.Steps["x"] = self.Lengths["x"]/(2**(self.Depth))
+				self.Steps["y"] = self.Lengths["y"]/(2**(self.Depth))
+				self.Steps["z"] = self.Lengths["z"]/(2**(self.Depth))
 			self.repair() # these supported undos are fundamentally shifts/scales, so must repair
 			self.refresh_statistics() # likely that statistics changed, force recalculation
 			self.notify_observers()
