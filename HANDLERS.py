@@ -75,7 +75,7 @@ def image_resize_timeout( bb, bv, gtkimage, bbframe, svs, sbframes ):
 	reset_projections()
 
 	# In case it ever happens (it shouldn't) that the new dimensions have an appreciably different aspect ratio than the original, notify
-	if round( float(bv.Img.width)/float(bv.Img.height), 2 ) != round( bv.AspectRatio, 2 ):
+	if round( float(bv.Img.width)/float(bv.Img.height), 2 ) != round( float(bv.AspectRatio.numerator)/float(bv.AspectRatio.denominator), 2 ):
 		print( "\n[sent @ %.2f] image_resize_timeout : resized large image to be %dx%d (aspect %.2f)" % ( time.clock(), bv.Img.width, bv.Img.height, float(bv.Img.width)/float(bv.Img.height) ) )
 		smallsizes = ()
 		for plane in ( "XY", "YZ", "XZ" ): # dictionaries have arbitrary order and I don't want to guess which plane is which, so force the order
