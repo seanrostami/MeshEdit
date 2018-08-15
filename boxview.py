@@ -5,6 +5,8 @@ import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GdkPixbuf, GLib
 
+from fractions import Fraction
+
 from CONFIG import BOXVIEWBACKGROUNDCOLOR, BOXVIEWGRIDCOLOR, BOXVIEWGRIDTHICKNESS, BOXVIEWPOINTCOLOR, BOXVIEWPOINTRADIUS, BOXVIEWHIGHLIGHTCOLOR
 
 
@@ -19,7 +21,7 @@ from CONFIG import BOXVIEWBACKGROUNDCOLOR, BOXVIEWGRIDCOLOR, BOXVIEWGRIDTHICKNES
 class BoxView:
 
 	def __init__( self, w, h ):
-		self.AspectRatio = float(w)/float(h) # see note inside .resize_to, below
+		self.AspectRatio = Fraction( int(w), int(h) ) # see note inside .resize_to, below
 		self.Img = Image.new( "RGB", (int(w),int(h)), color = BOXVIEWBACKGROUNDCOLOR ) # not yet exploiting the possibility of "alpha"
 		self.Drw = ImageDraw.Draw( self.Img, "RGB" )
 		self.glibbytes = None
@@ -43,10 +45,10 @@ class BoxView:
 		h = None
 		if self.AspectRatio > float(W)/float(H):
 			w = W
-			h = float(W)/self.AspectRatio
+			h = float(W)*(self.AspectRatio.denominator)/(self.AspectRatio.numerator)
 		else:
 			h = H
-			w = float(H)*self.AspectRatio
+			w = float(H)*(self.AspectRatio.numerator)/(self.AspectRatio.denominator)
 		self.Img.close()
 		self.Img = Image.new( "RGB", (int(w),int(h)), color = BOXVIEWBACKGROUNDCOLOR )
 		self.Drw = ImageDraw.Draw( self.Img, "RGB" ) # recreate a PIL.ImageDraw for the new PIL.Image
